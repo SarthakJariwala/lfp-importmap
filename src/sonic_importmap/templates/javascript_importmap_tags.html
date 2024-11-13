@@ -1,0 +1,17 @@
+{% load static %}
+<script type="importmap">
+    {
+        "imports": {
+            {% for key, value in importmap_data.items %}
+                {% with file_loc=value %}
+                    "{{ key }}": "{% static file_loc %}"{% if not forloop.last %},{% endif %}
+                {% endwith %}
+            {% endfor %}
+        }
+    }
+</script>
+{% for key, value in importmap_data.items %}
+    {% with file_loc=value %}
+        <link rel="modulepreload" href="{% static file_loc %}">
+    {% endwith %}
+{% endfor %}
