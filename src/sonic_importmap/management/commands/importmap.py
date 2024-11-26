@@ -5,13 +5,12 @@ from pathlib import Path
 
 import httpx
 from django.core.management import CommandError
-from django_typer.management import TyperCommand, initialize, command
+from django_typer.management import TyperCommand, command, initialize
 
 from sonic_importmap.utils import extract_version, get_base_app_name, read_importmap_config, write_importmap_config
 
 
 class Command(TyperCommand):
-
     help = "Configure and use importmaps in your Django project."
     endpoint = "https://api.jspm.io/generate"
     importmap_config = {}
@@ -35,9 +34,7 @@ class Command(TyperCommand):
 
         # Check if the pkg_name already exists in the importmap.config.json file
         if pkg_name in self.importmap_config:
-            raise CommandError(
-                f"{pkg_name} already exists. Use `update` command to update it."
-            )
+            raise CommandError(f"{pkg_name} already exists. Use `update` command to update it.")
 
         response = self.generate_importmap(pkg_name)
         importmap = response.json().get("map").get("imports")
@@ -63,7 +60,5 @@ class Command(TyperCommand):
             },
         )
         if response.status_code != httpx.codes.OK:
-            raise CommandError(
-                f"Failed to generate importmap for {pkg_name}. Error: {response.text}"
-            )
+            raise CommandError(f"Failed to generate importmap for {pkg_name}. Error: {response.text}")
         return response

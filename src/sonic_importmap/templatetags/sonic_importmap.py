@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 from django import template
 from django.conf import settings
 
@@ -7,7 +8,7 @@ register = template.Library()
 
 @register.inclusion_tag("sonic_importmap/javascript_importmap_tags.html")
 def javascript_importmap_tags():
-    project_root = settings.BASE_DIR  
+    project_root = settings.BASE_DIR
     config_path = os.path.join(project_root, 'importmap.config.json')
 
     with open(config_path, 'r') as config_file:
