@@ -16,3 +16,8 @@ wheels/
 # OS
 .DS_Store
 Thumbs.db
+
+# Test files
+.coverage
+.pytest_cache/
+example_project/
