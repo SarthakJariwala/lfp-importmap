@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from pathlib import Path
 
 from django.conf import settings
 from django.core.management import CommandError
@@ -9,6 +10,10 @@ from django.core.management import CommandError
 def extract_version(url):
     match = re.search(r"@(\d+\.\d+\.\d+)", url)
     return match.group(1) if match else None
+
+
+def get_static_dir():
+    return Path(settings.STATIC_ROOT) if settings.STATIC_ROOT else Path(settings.STATICFILES_DIRS[0])
 
 
 def get_base_app_name():

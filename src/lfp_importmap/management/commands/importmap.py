@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import httpx
-from django.conf import settings
 from django.core.management import CommandError
 from django_typer.management import TyperCommand, command, initialize
 
@@ -12,6 +11,7 @@ from lfp_importmap.utils import (
     extract_version,
     get_base_app_name,
     get_importmap_config_path,
+    get_static_dir,
     read_importmap_config,
     write_importmap_config,
 )
@@ -81,18 +81,14 @@ class Command(TyperCommand):
         if response.status_code != httpx.codes.OK:
             raise CommandError(f"Failed to download file from {url}. Error: {response.text}")
 
-        static_dir = Path(settings.STATIC_ROOT) if settings.STATIC_ROOT else Path(settings.STATICFILES_DIRS[0])
-        app_dir = static_dir / app_name
-        app_dir.mkdir(parents=True, exist_ok=True)
+        app_dir = self._get_or_create_app_dir(app_name)
 
         file_path = app_dir / file_name
         file_path.write_text(response.text)
 
     def add_import_to_index(self, name: str, app_name: str) -> None:
         """Add import statement to index.js."""
-        static_dir = Path(settings.STATIC_ROOT) if settings.STATIC_ROOT else Path(settings.STATICFILES_DIRS[0])
-        app_dir = static_dir / app_name
-        app_dir.mkdir(parents=True, exist_ok=True)
+        app_dir = self._get_or_create_app_dir(app_name)
 
         index_path = app_dir / "index.js"
         if not index_path.exists():
@@ -103,3 +99,9 @@ class Command(TyperCommand):
         if import_statement not in content:
             with open(index_path, "a") as f:
                 f.write(import_statement)
+
+    def _get_or_create_app_dir(self, app_name: str) -> Path:
+        static_dir = get_static_dir()
+        app_dir = static_dir / app_name
+        app_dir.mkdir(parents=True, exist_ok=True)
+        return app_dir
