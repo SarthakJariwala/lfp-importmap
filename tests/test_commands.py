@@ -6,11 +6,13 @@ import pytest
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
+from lfp_importmap.utils import get_importmap_config_path
+
 
 class TestImportmapCommand:
     def setup_method(self):
         # Create temporary importmap.config.json for testing
-        self.config_path = Path("importmap.config.json")
+        self.config_path = Path(get_importmap_config_path())
         if self.config_path.exists():
             self.config_path.unlink()
 

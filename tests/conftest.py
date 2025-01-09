@@ -12,7 +12,7 @@ def pytest_configure():
         BASE_DIR=BASE_DIR,
         INSTALLED_APPS=[
             "django.contrib.staticfiles",
-            "sonic_importmap",
+            "lfp_importmap",
         ],
         STATIC_URL="/static/",
         STATIC_ROOT="static",

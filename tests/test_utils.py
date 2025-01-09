@@ -3,7 +3,7 @@ import os
 import pytest
 from django.core.management import CommandError
 
-from sonic_importmap.utils import extract_version, get_base_app_name
+from lfp_importmap.utils import extract_version, get_base_app_name
 
 
 def test_extract_version():
