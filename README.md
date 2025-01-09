@@ -1,10 +1,11 @@
 # lfp-importmap
 
-A simple way to use `importmaps` (a feature from browsers) in your Django projects.
+A simple way to use Javascript `importmaps` in your Django projects.
 
 ## What can you do with it?
 
-Use JS libraries in your Django projects without having to install `node` and use a frontend build system.
+Use Javascript libraries in your Django projects without having to install `node` and related tooling.
+No frontend build system required!
 
 ## How to use it?
 
@@ -28,17 +29,16 @@ It will also vendor the package code and make it available in your templates.
 
 3. In your `base.html` template, add the following:
 
-```html`
+```html
 {% load lfp_importmap %}
 
 <html>
-    <head>
-        ...
-        {% javascript_importmap_tags %}
-    </head>
-    <body>
-        ...
-    </body>
+  <head>
+    ... {% javascript_importmap_tags %}
+  </head>
+  <body>
+    ...
+  </body>
 </html>
 ```
 
