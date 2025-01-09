@@ -1,7 +1,7 @@
 [project]
-name = "sonic-importmap"
+name = "lfp-importmap"
 version = "0.1.0"
-description = "Add your description here"
+description = "Add importmaps to your Django project"
 readme = "README.md"
 authors = [
     { name = "Sarthak Jariwala", email = "sarthakjariwala@fastmail.com" },
