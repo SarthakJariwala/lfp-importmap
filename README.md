@@ -9,6 +9,18 @@ No frontend build system required!
 
 ## How to use it?
 
+0. Install from pypi
+
+```bash
+uv add lfp-importmap
+```
+
+or
+
+```bash
+pythom -m pip install lfp-importmap
+```
+
 1. Add `lfp_importmap` to your `INSTALLED_APPS` in your `settings.py`
 
 ```python
