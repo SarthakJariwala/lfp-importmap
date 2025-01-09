@@ -8,6 +8,8 @@ from django.core.management.base import CommandError
 
 from lfp_importmap.utils import get_importmap_config_path
 
+from .conftest import clean_static_directory
+
 
 class TestImportmapCommand:
     def setup_method(self):
@@ -15,11 +17,13 @@ class TestImportmapCommand:
         self.config_path = Path(get_importmap_config_path())
         if self.config_path.exists():
             self.config_path.unlink()
+        clean_static_directory()
 
     def teardown_method(self):
         # Clean up after tests
         if self.config_path.exists():
             self.config_path.unlink()
+        clean_static_directory()
 
     @patch("httpx.post")
     def test_add_package(self, mock_post):

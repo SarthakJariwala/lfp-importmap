@@ -1,7 +1,18 @@
 import os
+import shutil
 from pathlib import Path
 
 from django.conf import settings
+
+
+def clean_static_directory():
+    """Helper function to safely clean static directory"""
+    static_dir = Path(settings.STATIC_ROOT)
+    try:
+        if static_dir.exists():
+            shutil.rmtree(static_dir, ignore_errors=True)
+    except Exception:
+        pass  # Ignore any errors during cleanup
 
 
 def pytest_configure():
@@ -15,7 +26,7 @@ def pytest_configure():
             "lfp_importmap",
         ],
         STATIC_URL="/static/",
-        STATIC_ROOT="static",
+        STATIC_ROOT=str(BASE_DIR / "static"),
         DATABASES={
             "default": {
                 "ENGINE": "django.db.backends.sqlite3",
@@ -24,3 +35,13 @@ def pytest_configure():
         },
         SECRET_KEY="test-key",
     )
+
+
+def pytest_sessionstart():
+    # Clean up static directory at the start of test session
+    clean_static_directory()
+
+
+def pytest_sessionfinish():
+    # Clean up static directory at the end of test session
+    clean_static_directory()
