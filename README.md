@@ -49,3 +49,7 @@ Continuing the example from above, you can now use the `htmx` module in your tem
 ```html
 <button hx-get="{% url 'my-url-name' %}">Click me</button>
 ```
+
+## LICENSE
+
+MIT
