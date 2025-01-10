@@ -18,7 +18,7 @@ uv add lfp-importmap
 or
 
 ```bash
-pythom -m pip install lfp-importmap
+python -m pip install lfp-importmap
 ```
 
 1. Add `lfp_importmap` to your `INSTALLED_APPS` in your `settings.py`
