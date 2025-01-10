@@ -1,12 +1,11 @@
 import json
-from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
-from lfp_importmap.utils import get_importmap_config_path
+from lfp_importmap.utils import get_importmap_config_path, get_static_dir, write_importmap_config
 
 from .conftest import clean_static_directory
 
@@ -14,10 +13,11 @@ from .conftest import clean_static_directory
 class TestImportmapCommand:
     def setup_method(self):
         # Create temporary importmap.config.json for testing
-        self.config_path = Path(get_importmap_config_path())
+        self.config_path = get_importmap_config_path()
         if self.config_path.exists():
             self.config_path.unlink()
         clean_static_directory()
+        write_importmap_config({})
 
     def teardown_method(self):
         # Clean up after tests
