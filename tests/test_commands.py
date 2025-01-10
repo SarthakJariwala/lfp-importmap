@@ -146,3 +146,24 @@ class TestImportmapCommand:
         # Try to add react package
         with pytest.raises(CommandError):
             call_command("importmap", "add", "react")
+
+    # Local JS files
+    def test_add_local_file(self):
+        """Test adding a local JS file to importmap."""
+
+        call_command("importmap", "add", "app.js", local=True)
+
+        assert self.config_path.exists()
+
+        # Verify the config file was created with correct content
+        with open(self.config_path) as f:
+            config = json.load(f)
+            assert "app" in config
+            assert config["app"]["version"] is None
+            assert config["app"]["app_name"] == "test_project"
+
+        # Check that import was added to index.js
+        index_path = get_static_dir() / "test_project" / "index.js"
+        assert index_path.exists()
+        content = index_path.read_text()
+        assert 'import "app";' in content
