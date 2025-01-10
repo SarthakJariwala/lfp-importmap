@@ -4,7 +4,7 @@ A simple way to use Javascript `importmaps` in your Django projects.
 
 ## What can you do with it?
 
-Use Javascript libraries in your Django projects without having to install `node` and related tooling.
+Use Javascript libraries in your Django projects without having to install `node` and related frontend tooling like `webpack`, etc.
 No frontend build system required!
 
 ## How to use it?
