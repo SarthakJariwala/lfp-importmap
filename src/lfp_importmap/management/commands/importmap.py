@@ -27,7 +27,7 @@ class Command(TyperCommand):
         # Check if the importmap.config.json exists at the root of a django project
         # if not, create an empty one
         # If it exists, check if it's a valid JSON file
-        if not Path(get_importmap_config_path()).exists():
+        if not get_importmap_config_path().exists():
             write_importmap_config({})
         else:
             try:
@@ -36,7 +36,7 @@ class Command(TyperCommand):
                 raise CommandError("importmap.config.json is not a valid JSON file.")
 
     @command()
-    def add(self, pkg_name: str):
+    def add(self, pkg_name: str) -> None:
         """Add package to the importmap.config.json file."""
 
         # Check if the pkg_name already exists in the importmap.config.json file
