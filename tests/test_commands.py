@@ -53,6 +53,88 @@ class TestImportmapCommand:
         with pytest.raises(CommandError):
             call_command("importmap", "add", "react")
 
+    def test_init_creates_config_file(self):
+        """Test that init creates config file if it doesn't exist."""
+        if self.config_path.exists():
+            self.config_path.unlink()
+
+        call_command("importmap")
+        assert self.config_path.exists()
+        with open(self.config_path) as file:
+            assert json.load(file) == {}
+
+    def test_init_invalid_json(self):
+        """Test that init raises error for invalid JSON."""
+        with open(self.config_path, "w") as f:
+            f.write("invalid json")
+
+        with pytest.raises(CommandError) as exc_info:
+            call_command("importmap")
+            assert str(exc_info.value) == "importmap.config.json is not a valid JSON file"
+
+    @patch("httpx.get")
+    @patch("httpx.post")
+    def test_vendor_package_download_error(self, mock_post, mock_get):
+        """Test error handling when package download fails."""
+        # Mock JSPM API success
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {
+            "map": {"imports": {"react": "https://ga.jspm.io/npm:react@18.2.0/index.js"}}
+        }
+
+        # Mock package download failure
+        mock_get.return_value.status_code = 404
+        mock_get.return_value.text = "Not Found"
+
+        with pytest.raises(CommandError) as exc_info:
+            call_command("importmap", "add", "react")
+            assert (
+                str(exc_info.value)
+                == "Failed to download file from https://ga.jspm.io/npm:react@18.2.0/index.js. Error: Not Found"
+            )
+
+    @patch("httpx.get")
+    @patch("httpx.post")
+    def test_creates_index_file(self, mock_post, mock_get):
+        """Test that add command creates index.js if it doesn't exist."""
+        # Mock successful responses
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {
+            "map": {"imports": {"react": "https://ga.jspm.io/npm:react@18.2.0/index.js"}}
+        }
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.text = "console.log('react');"
+
+        call_command("importmap", "add", "react")
+
+        index_path = get_static_dir() / "test_project" / "index.js"
+        assert index_path.exists()
+        content = index_path.read_text()
+        assert 'import "react";' in content
+
+    @patch("httpx.get")
+    @patch("httpx.post")
+    def test_avoid_duplicate_imports(self, mock_post, mock_get):
+        """Test that import statements aren't duplicated in index.js."""
+        # Mock successful responses
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {
+            "map": {"imports": {"react": "https://ga.jspm.io/npm:react@18.2.0/index.js"}}
+        }
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.text = "console.log('react');"
+
+        # Create index.js with existing import
+        index_dir = get_static_dir() / "test_project"
+        index_dir.mkdir(parents=True, exist_ok=True)
+        index_path = index_dir / "index.js"
+        index_path.write_text('import "react";\n')
+
+        call_command("importmap", "add", "react")
+
+        content = index_path.read_text()
+        assert content.count('import "react";') == 1
+
     @patch("httpx.post")
     def test_generate_importmap_error(self, mock_post):
         # Mock the JSPM API response
