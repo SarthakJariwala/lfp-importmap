@@ -22,8 +22,8 @@ class Command(TyperCommand):
     endpoint = "https://api.jspm.io/generate"
     importmap_config = {}
 
-    @initialize()
-    def init(self):
+    @initialize(invoke_without_command=True)
+    def init(self) -> None:
         # Check if the importmap.config.json exists at the root of a django project
         # if not, create an empty one
         # If it exists, check if it's a valid JSON file
