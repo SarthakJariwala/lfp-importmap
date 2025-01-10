@@ -1,11 +1,20 @@
 [project]
 name = "lfp-importmap"
-description = "Add importmaps to your Django project"
 version = "0.2.0"
+description = "Add JS importmaps to your Django project without Node or any other frontend tooling."
 readme = "README.md"
-authors = [
-    { name = "Sarthak Jariwala", email = "sarthakjariwala@fastmail.com" },
+authors = [{ name = "Sarthak Jariwala", email = "sarthak@sarthakjariwala.com" }]
+urls = { repository = "https://github.com/SarthakJariwala/lfp-importmap" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: Django",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
 ]
+
 requires-python = ">=3.9"
 dependencies = ["django-typer[rich]>=2.4.0", "django>=4.2.16", "httpx>=0.27.2"]
 
