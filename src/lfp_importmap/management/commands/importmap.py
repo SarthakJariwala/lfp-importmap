@@ -1,7 +1,9 @@
 """`importmap` management command."""
 
 import json
+from os.path import splitext
 from pathlib import Path
+from typing import Optional
 
 import httpx
 from django.core.management import CommandError
@@ -36,27 +38,35 @@ class Command(TyperCommand):
                 raise CommandError("importmap.config.json is not a valid JSON file.")
 
     @command()
-    def add(self, pkg_name: str) -> None:
-        """Add package to the importmap.config.json file."""
+    def add(self, pkg_name: str, local: Optional[bool] = False, app_name: Optional[str] = None) -> None:
+        """
+        Add importmap for a package or a local js file.
+        Generates importmaps for the package, writes it to the importmap.config.json file,
+        and (for non-local packages) vendor the package code in your static directory.
+        """
 
         # Check if the pkg_name already exists in the importmap.config.json file
         if pkg_name in self.importmap_config:
             raise CommandError(f"{pkg_name} already exists. Use `update` command to update it.")
 
-        response = self.generate_importmap(pkg_name)
-        importmap = response.json().get("map").get("imports")
-
-        app_name = get_base_app_name()
+        if not local:
+            response = self.generate_importmap(pkg_name)
+            importmap = response.json().get("map").get("imports")
+            app_name = get_base_app_name()
+        else:
+            importmap = {splitext(pkg_name)[0]: "local"}
+            app_name = app_name or get_base_app_name()
 
         # Add the pkg_name to the importmap.config.json file
         for name, url in importmap.items():
             version = extract_version(url)
-            self.importmap_config[pkg_name] = {
+            self.importmap_config[name] = {
                 "name": name,
                 "version": version,
                 "app_name": app_name,
             }
-            self.vendor_package(url, app_name, f"{name}.js")
+            if not local:
+                self.vendor_package(url, app_name, f"{name}.js")
             self.add_import_to_index(name, app_name)
 
         write_importmap_config(self.importmap_config)
