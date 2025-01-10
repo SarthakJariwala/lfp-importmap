@@ -11,7 +11,8 @@ from .conftest import clean_static_directory
 
 
 class TestImportmapCommand:
-    def setup_method(self):
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
         # Create temporary importmap.config.json for testing
         self.config_path = get_importmap_config_path()
         if self.config_path.exists():
@@ -19,7 +20,8 @@ class TestImportmapCommand:
         clean_static_directory()
         write_importmap_config({})
 
-    def teardown_method(self):
+        yield
+
         # Clean up after tests
         if self.config_path.exists():
             self.config_path.unlink()
